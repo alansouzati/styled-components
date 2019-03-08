@@ -1,6 +1,6 @@
 // @flow
 import { EMPTY_ARRAY } from '../utils/empties';
-import flatten from '../utils/flatten';
+import { memFlatten } from '../utils/flatten';
 import isStaticRules from '../utils/isStaticRules';
 import stringifyRules from '../utils/stringifyRules';
 import StyleSheet from './StyleSheet';
@@ -25,7 +25,8 @@ export default class GlobalStyle {
   }
 
   createStyles(executionContext: Object, styleSheet: StyleSheet) {
-    const flatCSS = flatten(this.rules, executionContext, styleSheet);
+    const { children, component, forwardedRef, forwardedComponent, ...rest } = executionContext;
+    const flatCSS = memFlatten(this.rules, rest, styleSheet);
     const css = stringifyRules(flatCSS, '');
 
     styleSheet.inject(this.componentId, css);

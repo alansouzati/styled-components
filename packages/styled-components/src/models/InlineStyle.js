@@ -5,7 +5,7 @@ import transformDeclPairs from 'css-to-react-native';
 // $FlowFixMe
 import hashStr from '../vendor/glamor/hash';
 import type { RuleSet, StyleSheet } from '../types';
-import flatten from '../utils/flatten';
+import { memFlatten } from '../utils/flatten';
 // $FlowFixMe
 import parse from '../vendor/postcss-safe-parser/parse';
 
@@ -27,7 +27,8 @@ export default (styleSheet: StyleSheet) => {
     }
 
     generateStyleObject(executionContext: Object) {
-      const flatCSS = flatten(this.rules, executionContext).join('');
+      const { children, component, forwardedRef, forwardedComponent, ...rest } = executionContext;
+      const flatCSS = memFlatten(this.rules, rest).join('');
 
       const hash = hashStr(flatCSS);
       if (!generated[hash]) {

@@ -1,5 +1,6 @@
 // @flow
 import { isElement } from 'react-is';
+import mem from 'mem';
 import getComponentName from './getComponentName';
 import isFunction from './isFunction';
 import isStatelessFunction from './isStatelessFunction';
@@ -29,7 +30,7 @@ export const objToCss = (obj: Object, prevKey?: string): string => {
     : css;
 };
 
-export default function flatten(chunk: any, executionContext: ?Object, styleSheet: ?Object): any {
+export function flatten(chunk: any, executionContext: ?Object, styleSheet: ?Object): any {
   if (Array.isArray(chunk)) {
     const ruleSet = [];
 
@@ -81,3 +82,10 @@ export default function flatten(chunk: any, executionContext: ?Object, styleShee
   /* Handle objects */
   return isPlainObject(chunk) ? objToCss(chunk) : chunk.toString();
 }
+
+/* memoizes the execution of this expensive flatten operation */
+export const memFlatten = mem((rules: any, executionContext: ?Object, styleSheet: ?Object) =>
+  flatten(rules, executionContext, styleSheet)
+);
+
+export default flatten;

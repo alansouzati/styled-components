@@ -1,7 +1,7 @@
 // @flow
 // $FlowFixMe
 import hashStr from '../vendor/glamor/hash';
-import flatten from '../utils/flatten';
+import { memFlatten } from '../utils/flatten';
 import generateAlphabeticName from '../utils/generateAlphabeticName';
 import stringifyRules from '../utils/stringifyRules';
 import isStaticRules from '../utils/isStaticRules';
@@ -40,10 +40,10 @@ export default class ComponentStyle {
   }
 
   /*
-     * Flattens a rule set into valid CSS
-     * Hashes it, wraps the whole chunk in a .hash1234 {}
-     * Returns the hash to be injected on render()
-     * */
+   * Flattens a rule set into valid CSS
+   * Hashes it, wraps the whole chunk in a .hash1234 {}
+   * Returns the hash to be injected on render()
+   * */
   generateAndInjectStyles(executionContext: Object, styleSheet: StyleSheet) {
     const { isStatic, componentId, lastClassName } = this;
     if (
@@ -55,7 +55,8 @@ export default class ComponentStyle {
       return lastClassName;
     }
 
-    const flatCSS = flatten(this.rules, executionContext, styleSheet);
+    const { children, component, forwardedRef, forwardedComponent, ...rest } = executionContext;
+    const flatCSS = memFlatten(this.rules, rest, styleSheet);
     const name = hasher(this.componentId + flatCSS.join(''));
     if (!styleSheet.hasNameForId(componentId, name)) {
       styleSheet.inject(
